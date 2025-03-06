@@ -1,19 +1,31 @@
+name: Android Build
 
-                      - name: Download APK from APKMirror
-  # You may pin to the exact commit or the version.
-  # uses: Yakov5776/gh-apkmirror-dl@8dae3bb9cd1127c414ab1115274d45abb0124989
-  uses: Yakov5776/gh-apkmirror-dl@v1.3
-  with:
-    # Organization name
-    org: 
-    # Repository name
-    repo: 
-    # Version of the app
-    version: # optional
-    # Use bundle
-    bundle: # optional, default is true
-    # The file name
-    filename: # optional
-    # Overwrite file
-    overwrite: # optional, default is true
-          
+on:
+  push:
+    branches:
+      - main  # تغيير "main" إلى اسم الفرع الذي تستخدمه
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
